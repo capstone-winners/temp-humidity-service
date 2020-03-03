@@ -5,10 +5,10 @@ import busio
 import adafruit_bmp280
 
 import qrcode
+import json
 
-i2c = busio.I2C(board.SCL, board.SDA)
-sensor = adafruit_bmp280.Adafruit_BMP280_I2C(i2c)
-
+import py_resize
+from qrcode.image.pure import PymagingImage
 
 # QR Code format:
 #  {
@@ -36,21 +36,24 @@ def getState(sensor):
             "location": "Tom's Room"
         }
     }
-    return data
+    return json.dumps(data)
 
-state = getState(sensor)
-# TODO: add call to Nikhil's script to make sure qrCode has the right dimensions
-# Then actually display on screen
-qrCode = qrcode.make(state)
+def generateQRCode(state):
+    qrcode.make(state, image_factory=PymagingImage)
+    py_resize.main('some file name')
+
+
+i2c = busio.I2C(board.SCL, board.SDA)
+sensor = adafruit_bmp280.Adafruit_BMP280_I2C(i2c)
+generateQRCode(getState(sensor))
 
 
 while True:
     time.sleep(30)
-    if state != getState(sensor):
+    newState = getState(sensor)
+    if state != newState:
         # The temperature/humidity has changed, generate new QR Code
-        state = getState(sensor)
-        # TODO: add call to Nikhil's script to make sure qrCode has the right dimensions
-        # Then actually display on screen
-        qrCode = qrcode.make(state)
+        state = newState
+        generateQRCode(state)
 
 
