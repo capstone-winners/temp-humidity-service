@@ -23,7 +23,6 @@ from qrcode.image.pure import PymagingImage
 #  }
 # }
 
-
 def getState(sensor):
     data = {
         "temperature": sensor.temperature,
@@ -39,8 +38,9 @@ def getState(sensor):
     return json.dumps(data)
 
 def generateQRCode(state):
-    qrcode.make(state, image_factory=PymagingImage)
-    py_resize.main('some file name')
+    qr = qrcode.make(state, image_factory=PymagingImage)
+    qr.save(f'{state.super.deviceId}.bmp')
+    py_resize.main(f'-f {state.super.deviceId}.bmp')
 
 
 i2c = busio.I2C(board.SCL, board.SDA)
