@@ -28,7 +28,7 @@ def getState(sensor):
         "temperature": sensor.temperature,
         "pressure": sensor.pressure,
         "super": {
-            "deviceId": "hard coded",
+            "deviceId": "toms-climate-sensor",
             "deviceType": "climate",
             "status": "ok",
             "group": ["Trap House"],
@@ -40,7 +40,7 @@ def getState(sensor):
 def generateQRCode(state):
     qr = qrcode.make(state, image_factory=PymagingImage)
     qr.save(f'{state.super.deviceId}.bmp')
-    py_resize.main(f'-f {state.super.deviceId}.bmp')
+    py_resize.main(f'{state.super.deviceId}.bmp')
 
 
 i2c = busio.I2C(board.SCL, board.SDA)
